@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Quote Search</title>
+  <style>
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>Quote Search</h1>
+  <input type="text" id="searchInput" placeholder="Enter a keyword">
+  <ul id="quoteList"></ul>
+  <div id="errorMessage" class="error"></div>
+
+  <script>
+    const quoteList = document.getElementById('quoteList');
+    const searchInput = document.getElementById('searchInput');
+    const errorMessage = document.getElementById('errorMessage');
+    const apiUrl = 'https://dummyjson.com/quotes';
+
+    // Fetch quote data from the API
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+        const quotes = data.map(item => item.text);
+
+        // Display all quotes initially
+        displayQuotes(quotes);
+
+        // Filter quotes based on user input
+        searchInput.addEventListener('input', () => {
+          const searchTerm = searchInput.value.toLowerCase();
+          const filteredQuotes = quotes.filter(quote => quote.toLowerCase().includes(searchTerm));
+          displayQuotes(filteredQuotes);
+        });
+      })
+      .catch(error => {
+        errorMessage.textContent = 'Failed to fetch quote data. Please try again later.';
+        console.error(error);
+      });
+
+    // Display quotes in the list
+    function displayQuotes(quotes) {
+      quoteList.innerHTML = '';
+      if (quotes.length > 0) {
+        quotes.forEach(quote => {
+          const li = document.createElement('li');
+          li.textContent = quote;
+          quoteList.appendChild(li);
+        });
+        errorMessage.textContent = '';
+      } else {
+        errorMessage.textContent = 'No quotes found.';
+      }
+    }
+  </script>
+</body>
+</html>
